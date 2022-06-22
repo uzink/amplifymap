@@ -1,45 +1,73 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import Peer from 'peerjs';
 
 function Webrtc() {
-  const mediaStreamConstraints = {
-    video: true,
-  };
+  const [peerId, setPeerId] = useState('');
+  const [remotePeerIdValue, setRemotePeerIdValue] = useState('');
+  const remoteVideoRef = useRef(null);
+  const currentUserVideoRef = useRef(null);
+  const peerInstance = useRef(null);
 
   useEffect(() => {
-    navigator.mediaDevices
-      .getUserMedia(mediaStreamConstraints)
-      .then((mediaStream) => {
-        console.log(mediaStream);
-        // gotLocalMediaStream(mediaStream);
-      })
-      .catch(handleLocalMediaStreamError);
-  });
+    const peer = new Peer();
 
-  const elementRef = useRef();
+    peer.on('open', (id) => {
+      setPeerId(id);
+    });
 
-  const localVideo = elementRef.current;
+    peer.on('call', (call) => {
+      var getUserMedia =
+        navigator.getUserMedia ||
+        navigator.webkitGetUserMedia ||
+        navigator.mozGetUserMedia;
 
-  function gotLocalMediaStream(mediaStream) {
-    // let localStream = mediaStream;
-    localVideo.srcObject = mediaStream;
-  }
+      getUserMedia({ video: true, audio: true }, (mediaStream) => {
+        currentUserVideoRef.current.srcObject = mediaStream;
+        currentUserVideoRef.current.play();
+        call.answer(mediaStream);
+        call.on('stream', function (remoteStream) {
+          remoteVideoRef.current.srcObject = remoteStream;
+          remoteVideoRef.current.play();
+        });
+      });
+    });
 
-  function handleLocalMediaStreamError(error) {
-    console.log('navigator.getUserMedia error: ', error);
-  }
+    peerInstance.current = peer;
+  }, []);
 
-  navigator.mediaDevices
-    .getUserMedia(mediaStreamConstraints)
-    .then((mediaStream) => {
-      gotLocalMediaStream(mediaStream);
-    })
-    .catch(handleLocalMediaStreamError);
+  const call = (remotePeerId) => {
+    var getUserMedia =
+      navigator.getUserMedia ||
+      navigator.webkitGetUserMedia ||
+      navigator.mozGetUserMedia;
+
+    getUserMedia({ video: true, audio: true }, (mediaStream) => {
+      currentUserVideoRef.current.srcObject = mediaStream;
+      currentUserVideoRef.current.play();
+
+      const call = peerInstance.current.call(remotePeerId, mediaStream);
+
+      call.on('stream', (remoteStream) => {
+        remoteVideoRef.current.srcObject = remoteStream;
+        remoteVideoRef.current.play();
+      });
+    });
+  };
 
   return (
-    <div className="mt-6 ">
-      <div className="h-auto w-auto mx-auto mt-5">
-        <h3 className="text-lg font-medium ">Video</h3>
-        <video ref={elementRef} width="600" height="520" controls></video>
+    <div className="App">
+      <h1>Current user id is {peerId}</h1>
+      <input
+        type="text"
+        value={remotePeerIdValue}
+        onChange={(e) => setRemotePeerIdValue(e.target.value)}
+      />
+      <button onClick={() => call(remotePeerIdValue)}>Call</button>
+      <div>
+        <video ref={currentUserVideoRef} />
+      </div>
+      <div>
+        <video ref={remoteVideoRef} />
       </div>
     </div>
   );
