@@ -75,7 +75,7 @@ function Webrtc() {
         <video ref={remoteVideoRef} />
       </div>
       <div className="mt-10">
-        <video className="h-48 w-52" ref={currentUserVideoRef} />
+        <video ref={currentUserVideoRef} />
       </div>
     </div>
   );
