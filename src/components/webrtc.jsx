@@ -29,7 +29,7 @@ function Webrtc() {
         },
         (mediaStream) => {
           currentUserVideoRef.current.srcObject = mediaStream;
-          // currentUserVideoRef.current.play();
+          currentUserVideoRef.current.play();
           call.answer(mediaStream);
           call.on('stream', function (remoteStream) {
             remoteVideoRef.current.srcObject = remoteStream;
@@ -50,7 +50,7 @@ function Webrtc() {
 
     getUserMedia({ video: true }, (mediaStream) => {
       currentUserVideoRef.current.srcObject = mediaStream;
-      // currentUserVideoRef.current.play();
+      currentUserVideoRef.current.play();
 
       const call = peerInstance.current.call(remotePeerId, mediaStream);
 
@@ -75,7 +75,7 @@ function Webrtc() {
         <video ref={remoteVideoRef} />
       </div>
       <div>
-        <video ref={currentUserVideoRef} />
+        <video className="h-6 w-8" ref={currentUserVideoRef} />
       </div>
     </div>
   );
