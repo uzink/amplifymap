@@ -60,6 +60,7 @@ function Webrtc() {
       <input
         type="text"
         value={remotePeerIdValue}
+        className="border-2"
         onChange={(e) => setRemotePeerIdValue(e.target.value)}
       />
       <button onClick={() => call(remotePeerIdValue)}>Call</button>
