@@ -24,7 +24,7 @@ function Webrtc() {
       getUserMedia(
         {
           video: {
-            facingMode: 'user',
+            facingMode: 'environment',
           },
         },
         (mediaStream) => {
