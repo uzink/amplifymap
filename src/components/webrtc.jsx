@@ -21,15 +21,22 @@ function Webrtc() {
         navigator.webkitGetUserMedia ||
         navigator.mozGetUserMedia;
 
-      getUserMedia({ video: true }, (mediaStream) => {
-        currentUserVideoRef.current.srcObject = mediaStream;
-        // currentUserVideoRef.current.play();
-        call.answer(mediaStream);
-        call.on('stream', function (remoteStream) {
-          remoteVideoRef.current.srcObject = remoteStream;
-          remoteVideoRef.current.play();
-        });
-      });
+      getUserMedia(
+        {
+          video: {
+            facingMode: 'user',
+          },
+        },
+        (mediaStream) => {
+          currentUserVideoRef.current.srcObject = mediaStream;
+          // currentUserVideoRef.current.play();
+          call.answer(mediaStream);
+          call.on('stream', function (remoteStream) {
+            remoteVideoRef.current.srcObject = remoteStream;
+            remoteVideoRef.current.play();
+          });
+        }
+      );
     });
 
     peerInstance.current = peer;
