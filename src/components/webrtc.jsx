@@ -75,7 +75,7 @@ function Webrtc() {
         // const track = stream.getVideoTracks()[0];
         const call = peerInstance.current.call(
           remotePeerId,
-          new MediaStream(stream)
+          MediaStream(stream)
         );
         console.log('Failed to get local stream', call);
 
