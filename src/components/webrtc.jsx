@@ -71,9 +71,10 @@ function Webrtc() {
       },
       (err) => {
         console.log('Failed to get local stream', new MediaStream());
-        // const stream = currentUserVideoRef.current.captureStream();
-        // const track = stream.getVideoTracks()[0];
-        const call = peerInstance.current.call(remotePeerId);
+        const videoTrack = createEmptyVideoTrack({ width: 640, height: 480 });
+        const mediaStream = new MediaStream([videoTrack]);
+
+        const call = peerInstance.current.call(remotePeerId, mediaStream);
         console.log('Failed to get local stream', call);
 
         call.on('stream', (remoteStream) => {
@@ -85,12 +86,18 @@ function Webrtc() {
     );
   };
 
-  // const createEmptyVideoTrack = () => {
-  //   const stream = currentUserVideoRef.current.captureStream();
-  //   const track = stream.getVideoTracks()[0];
+  const createEmptyVideoTrack = ({ width, height }) => {
+    const canvas = Object.assign(document.createElement('canvas'), {
+      width,
+      height,
+    });
+    canvas.getContext('2d').fillRect(0, 0, width, height);
 
-  //   return track;
-  // };
+    const stream = canvas.captureStream();
+    const track = stream.getVideoTracks()[0];
+
+    return Object.assign(track, { enabled: false });
+  };
 
   return (
     <div className="App">
