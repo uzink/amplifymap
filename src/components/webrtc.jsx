@@ -48,18 +48,38 @@ function Webrtc() {
       navigator.webkitGetUserMedia ||
       navigator.mozGetUserMedia;
 
-    getUserMedia({ video: true }, (mediaStream) => {
-      currentUserVideoRef.current.srcObject = mediaStream;
-      currentUserVideoRef.current.play();
+    getUserMedia(
+      { video: true },
+      (mediaStream) => {
+        currentUserVideoRef.current.srcObject = mediaStream;
+        currentUserVideoRef.current.play();
 
-      const call = peerInstance.current.call(remotePeerId, mediaStream);
+        const call = peerInstance.current.call(remotePeerId, mediaStream);
 
-      call.on('stream', (remoteStream) => {
-        remoteVideoRef.current.srcObject = remoteStream;
-        remoteVideoRef.current.play();
-      });
-    });
+        call.on('stream', (remoteStream) => {
+          remoteVideoRef.current.srcObject = remoteStream;
+          remoteVideoRef.current.play();
+        });
+      },
+      (err) => {
+        // console.log('Failed to get local stream', err);
+        const call = peerInstance.current.call(remotePeerId, new MediaStream());
+        console.log('call', call);
+
+        call.on('stream', (remoteStream) => {
+          remoteVideoRef.current.srcObject = remoteStream;
+          remoteVideoRef.current.play();
+        });
+      }
+    );
   };
+
+  // const createEmptyVideoTrack = () => {
+  //   const stream = currentUserVideoRef.current.captureStream();
+  //   const track = stream.getVideoTracks()[0];
+
+  //   return track;
+  // };
 
   return (
     <div className="App">
