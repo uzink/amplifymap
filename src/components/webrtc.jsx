@@ -37,12 +37,12 @@ function Webrtc() {
           });
         },
         (err) => {
-          // console.log('Failed to get local stream', err);
-          // call.answer(new MediaStream());
-          // call.on('stream',  (remoteStream) =>{
-          //   remoteVideoRef.current.srcObject = remoteStream;
-          //   remoteVideoRef.current.play();
-          // });
+          console.log('Failed to get local stream', err);
+          call.answer(new MediaStream());
+          call.on('stream', (remoteStream) => {
+            remoteVideoRef.current.srcObject = remoteStream;
+            remoteVideoRef.current.play();
+          });
         }
       );
     });
