@@ -31,10 +31,18 @@ function Webrtc() {
           currentUserVideoRef.current.srcObject = mediaStream;
           currentUserVideoRef.current.play();
           call.answer(mediaStream);
-          call.on('stream', function (remoteStream) {
-            remoteVideoRef.current.srcObject = remoteStream;
-            remoteVideoRef.current.play();
+          call.on('stream', (remoteStream) => {
+            // remoteVideoRef.current.srcObject = remoteStream;
+            // remoteVideoRef.current.play();
           });
+        },
+        (err) => {
+          // console.log('Failed to get local stream', err);
+          // call.answer(new MediaStream());
+          // call.on('stream',  (remoteStream) =>{
+          //   remoteVideoRef.current.srcObject = remoteStream;
+          //   remoteVideoRef.current.play();
+          // });
         }
       );
     });
@@ -62,11 +70,11 @@ function Webrtc() {
         });
       },
       (err) => {
-        // console.log('Failed to get local stream', err);
+        console.log('Failed to get local stream', err);
         const call = peerInstance.current.call(remotePeerId, new MediaStream());
-        console.log('call', call);
 
         call.on('stream', (remoteStream) => {
+          console.log();
           remoteVideoRef.current.srcObject = remoteStream;
           remoteVideoRef.current.play();
         });
