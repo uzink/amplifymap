@@ -1,8 +1,5 @@
 # Getting Started with this project
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app). This is a 
-
-</p><!-- ABOUT THE PROJECT -->
 
 ## About The Project
 
@@ -11,7 +8,7 @@ This is a simple video streaming application I built on behalf of a client as a 
 
 ### Built With
 
-* [React](https://reactjs.org/)
+* [Create React App](https://github.com/facebook/create-react-app)
 * [PeerJs](https://peerjs.com/)
 
 
