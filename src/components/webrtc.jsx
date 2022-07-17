@@ -31,11 +31,12 @@ function Webrtc() {
           currentUserVideoRef.current.srcObject = mediaStream;
           currentUserVideoRef.current.play();
           call.answer(mediaStream);
-          call.on('stream', function (remoteStream) {
+          call.on('stream', (remoteStream) => {
             remoteVideoRef.current.srcObject = remoteStream;
             remoteVideoRef.current.play();
           });
-        }
+        },
+        (err) => {}
       );
     });
 
@@ -48,17 +49,44 @@ function Webrtc() {
       navigator.webkitGetUserMedia ||
       navigator.mozGetUserMedia;
 
-    getUserMedia({ video: true }, (mediaStream) => {
-      currentUserVideoRef.current.srcObject = mediaStream;
-      currentUserVideoRef.current.play();
+    getUserMedia(
+      { video: true },
+      (mediaStream) => {
+        currentUserVideoRef.current.srcObject = mediaStream;
+        currentUserVideoRef.current.play();
 
-      const call = peerInstance.current.call(remotePeerId, mediaStream);
+        const call = peerInstance.current.call(remotePeerId, mediaStream);
 
-      call.on('stream', (remoteStream) => {
-        remoteVideoRef.current.srcObject = remoteStream;
-        remoteVideoRef.current.play();
-      });
+        call.on('stream', (remoteStream) => {
+          remoteVideoRef.current.srcObject = remoteStream;
+          remoteVideoRef.current.play();
+        });
+      },
+      (err) => {
+        const videoTrack = createEmptyVideoTrack({ width: 640, height: 480 });
+        const mediaStream = new MediaStream([videoTrack]);
+        const call = peerInstance.current.call(remotePeerId, mediaStream);
+
+        call.on('stream', (remoteStream) => {
+          console.log(remoteStream);
+          remoteVideoRef.current.srcObject = remoteStream;
+          remoteVideoRef.current.play();
+        });
+      }
+    );
+  };
+
+  const createEmptyVideoTrack = ({ width, height }) => {
+    const canvas = Object.assign(document.createElement('canvas'), {
+      width,
+      height,
     });
+    canvas.getContext('2d').fillRect(0, 0, width, height);
+
+    const stream = canvas.captureStream();
+    const track = stream.getVideoTracks()[0];
+
+    return Object.assign(track, { enabled: false });
   };
 
   return (
